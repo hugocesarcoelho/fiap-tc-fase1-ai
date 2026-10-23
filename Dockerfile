@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY breast-cancer-knn-svm-random-forest.ipynb .
+COPY breast-cancer-knn-svm-random-forest.ipynb 02-validacao-shap.ipynb ./
 COPY data/ data/
 
 EXPOSE 8888

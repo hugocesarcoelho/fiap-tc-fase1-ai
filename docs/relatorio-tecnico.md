@@ -1,4 +1,4 @@
-# Relatório Técnico — Classificação de Câncer de Mama com KNN e SVM
+# Relatório Técnico — Classificação de Câncer de Mama com KNN, SVM e Random Forest
 
 23/10/2026 · Hugo César Coelho de Oliveira
 
@@ -65,11 +65,61 @@ Isso parece contradizer a correlação: `concave points_mean` (0,78), `perimeter
 
 **Análise exploratória.** Os gráficos confirmam o que os modelos aprenderam. Malignos têm `area_mean` e `concavity_mean` claramente maiores, e o par área × concavidade separa bem os grupos no pairplot. Já `symmetry_mean` tem forte sobreposição entre as classes.
 
+## Validação, 30 variáveis e SHAP
+
+Esta seção corresponde ao notebook `02-validacao-shap.ipynb` e executa dois dos próximos passos listados acima: ajustar hiperparâmetros sem olhar o teste e testar as variáveis `_worst` e `_se`. Acrescenta também a interpretação com SHAP, pedida no enunciado.
+
+### Conjunto de validação
+
+No notebook principal o `k` do KNN foi escolhido pela taxa de erro no conjunto de teste. Isso faz o teste participar da escolha do modelo e deixa a métrica final otimista. Aqui a base foi dividida em **treino (398 exames), validação (85) e teste (86)**, com `stratify` e `random_state=7`. Todos os hiperparâmetros foram escolhidos na validação, pelo maior recall de malignos, e o teste foi usado uma única vez. A padronização entrou dentro do `Pipeline` de cada modelo, ajustada só com o treino a cada `fit`.
+
+Configurações testadas na validação: `k` de 1 a 15 no KNN; `C` em {0,01; 0,1; 1; 10} no SVM linear; 100 ou 300 árvores e `class_weight` padrão ou `balanced` no Random Forest.
+
+### 10 variáveis versus 30 variáveis
+
+O mesmo procedimento foi repetido com as 10 medidas `_mean` (como no notebook principal) e com as 30 medidas originais.
+
+| Variáveis | Modelo | Configuração (validação) | Acurácia | Recall malignos | Precisão | F1 | FN | FP |
+|---|---|---|---|---|---|---|---|---|
+| 10 (`_mean`) | KNN | k = 5 | 90,7% | 90,6% | 85,3% | 0,879 | 3 | 5 |
+| 10 (`_mean`) | SVM linear | C = 0,1 | 91,9% | 84,4% | 93,1% | 0,885 | 5 | 2 |
+| 10 (`_mean`) | Random Forest | 100 árvores | 87,2% | 78,1% | 86,2% | 0,820 | 7 | 4 |
+| 30 (todas) | KNN | k = 3 | 95,3% | 90,6% | 96,7% | 0,935 | 3 | 1 |
+| **30 (todas)** | **SVM linear** | **C = 1** | **95,3%** | **93,8%** | **93,8%** | **0,938** | **2** | **2** |
+| 30 (todas) | Random Forest | 100 árvores | 90,7% | 81,2% | 92,9% | 0,867 | 6 | 2 |
+
+Teste com 86 exames (32 malignos). Os números não são diretamente comparáveis aos da seção anterior porque a divisão é outra (teste de 86 exames em vez de 114).
+
+Três leituras:
+
+- Com as mesmas 10 variáveis e validação separada, o KNN escolheu `k = 5` de novo. A conclusão do notebook principal se confirma; o que muda é o método, que agora não usa o teste.
+- **Com as 30 variáveis todos os modelos melhoram.** As medidas `_worst` registram o pior valor de cada característica no exame, e um tumor com um núcleo muito irregular pode ter média próxima de um benigno. O SVM linear com 30 variáveis é o melhor modelo: 95,3% de acurácia, 93,8% de recall e 2 falsos negativos em 32 malignos. A hipótese de que as `_worst` eram redundantes com as médias era razoável, mas o experimento mostra que elas acrescentam informação.
+- O SVM atingiu 100% na validação e 95,3% no teste. Com 85 exames de validação esse tipo de diferença é esperado, e o número do teste é o que vale.
+
+O Random Forest continua atrás nos dois cenários, coerente com a leitura anterior: com poucos exames e variáveis muito correlacionadas, uma fronteira linear generaliza bem.
+
+### Interpretação com SHAP
+
+SHAP atribui a cada variável de cada exame uma contribuição, positiva (empurra para maligno) ou negativa. Foram usados `TreeExplainer` no Random Forest e `LinearExplainer` no SVM linear, aplicado sobre os dados padronizados.
+
+As variáveis de maior impacto combinam **tamanho** (`radius_worst`, `area_worst`, `perimeter_worst`) e **irregularidade do contorno** (`concave points_mean`, `concavity_worst`, `compactness_mean`). Metade delas é `_worst`, o que explica a melhora ao usar as 30 variáveis. Em relação à importância por permutação e por impureza da seção anterior, o SHAP acrescenta a direção do efeito: valores altos dessas medidas empurram para maligno.
+
+Um detalhe que parece contraditório: no SVM, `compactness_mean` alta empurra para benigno. É um efeito da colinearidade num modelo linear. `concavity` e `concave points` já capturam a irregularidade do contorno, e o coeficiente de `compactness` acaba compensando o excesso. Não significa que tumores compactos sejam benignos, e sim que, dado o resto, essa variável corrige a estimativa.
+
+No nível individual (gráfico waterfall de um exame maligno do teste), a decisão vem de uma soma de evidências, não de uma única medida. É o tipo de saída que faz sentido mostrar junto com a previsão: não só "maligno", mas "maligno principalmente por raio, área e pontos côncavos".
+
+Figuras em `docs/figuras/`: `comparacao-10-vs-30.png`, `matriz-confusao-svm.png`, `shap-random-forest.png`, `shap-svm.png`, `shap-exame-individual.png`.
+
+### Reprodutibilidade
+
+As versões das dependências foram fixadas no `requirements.txt` e o projeto ganhou um `Dockerfile` que instala tudo e abre o Jupyter com o dataset incluído. As instruções estão no README.
+
 ## Conclusão e próximos passos
 
-Com só 10 medidas médias e padronização, o KNN (k = 5) chega a 92,1% de acurácia e 85,7% de recall. É o modelo recomendado entre os três testados; o Random Forest, sem ajuste, ficou em 88,6% e 76,2%. Por deixar escapar 6 de 42 malignos, o KNN serve como apoio à triagem, não como substituto do diagnóstico médico.
+Com as 10 medidas médias e a divisão original, o KNN (k = 5) chega a 92,1% de acurácia e 85,7% de recall. Com validação separada e as 30 medidas, o **SVM linear (C = 1)** passa a ser o modelo recomendado: 95,3% de acurácia, 93,8% de recall e 2 falsos negativos em 32 malignos no teste. O SHAP mostra que a decisão se apoia em tamanho e irregularidade do contorno, com peso relevante das medidas `_worst`.
 
-- Usar validação cruzada estratificada: com 114 exames de teste, cada erro move a acurácia em 0,9 ponto.
-- Ajustar hiperparâmetros (k e pesos do KNN, `C` do SVM) com `GridSearchCV`, otimizando o recall.
-- Testar as variáveis `_worst` e `_se` hoje descartadas.
-- Ajustar o Random Forest (profundidade, número de árvores, `class_weight`) e o limiar de decisão para reduzir os falsos negativos.
+Mesmo o melhor modelo deixa malignos escapar. Num exame de triagem o custo de um falso negativo é muito maior que o de um falso positivo, então o modelo serve como apoio para priorizar exames, não como diagnóstico. A palavra final é do médico.
+
+- Ajustar o limiar de decisão para privilegiar recall, aceitando mais falsos positivos.
+- Usar validação cruzada estratificada em cima da divisão treino/teste para reduzir a variância das métricas (86 exames de teste: cada erro move a acurácia em 1,2 ponto).
+- Validar com dados de outros hospitais e equipamentos antes de qualquer uso real. A base tem 569 exames de uma única fonte.

@@ -13,19 +13,28 @@ O notebook usa o dataset [Breast Cancer Wisconsin (Diagnostic)](https://www.kagg
 - comparação dos três modelos por matriz de confusão e relatório de classificação;
 - importância das variáveis do KNN por *permutation importance* (métrica: recall).
 
+O segundo notebook, `02-validacao-shap.ipynb`, complementa o primeiro com:
+
+- divisão **treino / validação / teste** (70/15/15) e escolha de hiperparâmetros na validação;
+- comparação dos modelos com 10 variáveis (`_mean`) e com todas as 30;
+- interpretação com **SHAP** (global e de um exame individual);
+- discussão sobre o uso do modelo como apoio à triagem.
+
 O relatório técnico com o pré-processamento, os modelos e os resultados está em [docs/relatorio-tecnico.md](docs/relatorio-tecnico.md) (também em [PDF](docs/relatorio-tecnico.pdf)).
 
 ## Estrutura
 
 ```
 .
-├── breast-cancer-knn-svm-random-forest.ipynb   # notebook principal
+├── breast-cancer-knn-svm-random-forest.ipynb   # notebook principal: EDA, pré-processamento, KNN, SVM, RF
+├── 02-validacao-shap.ipynb                     # validação, 10 vs 30 variáveis, SHAP
 ├── data/
 │   └── data.csv                                # dataset (já incluído)
 ├── docs/
 │   ├── entrega-fase1.pdf / .md                 # documento de entrega da Fase 1
 │   ├── relatorio-tecnico.pdf / .md             # relatório técnico
-│   ├── resultados/                             # gráficos gerados pelo notebook
+│   ├── resultados/                             # gráficos gerados pelo notebook principal
+│   ├── figuras/                                # gráficos do notebook 02 (SHAP, comparação)
 │   └── importancia-variaveis-knn.png           # gráfico usado no relatório
 ├── Dockerfile
 ├── requirements.txt
@@ -43,7 +52,7 @@ docker build -t fiap-tc-fase1-ai .
 docker run --rm -p 8888:8888 fiap-tc-fase1-ai
 ```
 
-Abra http://localhost:8888 no navegador, entre em `breast-cancer-knn-svm-random-forest.ipynb` e execute todas as células (**Run All**). Para encerrar, use `Ctrl+C` no terminal.
+Abra http://localhost:8888 no navegador, entre em `breast-cancer-knn-svm-random-forest.ipynb` e execute todas as células (**Run All**). Depois faça o mesmo em `02-validacao-shap.ipynb`. Os dois notebooks são independentes e leem `data/data.csv` diretamente. Para encerrar, use `Ctrl+C` no terminal.
 
 O Jupyter do container roda sem token, para uso local. Alterações feitas no notebook ficam só dentro do container e somem quando ele é encerrado.
 
