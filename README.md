@@ -32,7 +32,7 @@ O notebook usa o dataset [Breast Cancer Wisconsin (Diagnostic)](https://www.kagg
 ### 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/hugocesarcoelho/fiap-tc-fase1-ai.git
 cd fiap-tc-fase1-ai
 ```
 
