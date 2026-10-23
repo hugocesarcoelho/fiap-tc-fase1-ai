@@ -1,4 +1,4 @@
-# Classificação de Câncer de Mama — KNN e SVM
+# Classificação de Câncer de Mama — KNN, SVM e Random Forest
 
 Tech Challenge da Fase 1 da pós-graduação **IA para DEVs (FIAP)**.
 
@@ -9,7 +9,9 @@ O notebook usa o dataset [Breast Cancer Wisconsin (Diagnostic)](https://www.kagg
 - divisão treino/teste estratificada (80/20) e padronização com `StandardScaler`;
 - **KNN**: escolha do `k` pela taxa de erro, depois treino e acurácia;
 - **SVM** (`LinearSVC`): treino e acurácia;
-- importância das variáveis por *permutation importance* (métrica: recall).
+- **Random Forest**: treino, acurácia e importância das variáveis do próprio modelo;
+- comparação dos três modelos por matriz de confusão e relatório de classificação;
+- importância das variáveis do KNN por *permutation importance* (métrica: recall).
 
 O relatório técnico com o pré-processamento, os modelos e os resultados está em [docs/relatorio-tecnico.md](docs/relatorio-tecnico.md) (também em [PDF](docs/relatorio-tecnico.pdf)).
 
