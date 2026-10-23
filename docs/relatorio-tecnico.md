@@ -32,7 +32,7 @@ Comparamos três classificadores de natureza diferente: um baseado em vizinhanç
 | SVM linear (`LinearSVC`) | C = 1 | O pairplot mostrou que as classes se separam razoavelmente por uma fronteira (área e concavidade altas = maligno). O SVM busca a fronteira de maior margem e costuma generalizar bem em bases pequenas como esta (455 exames de treino). |
 | Random Forest (`RandomForestClassifier`) | 100 árvores, `random_state=42` | Capta relações não lineares e interações entre variáveis sem exigir padronização. Por combinar muitas árvores, é robusto a ruído e tem uma importância de variáveis própria, que serve de contraponto à do KNN. |
 
-**Escolha do k.** Testamos k de 1 a 9 e medimos a taxa de erro no teste. O erro cai de 9,6% (k = 1) para 7,9% a partir de k = 3 e fica estável. Escolhemos k = 5, no meio da faixa estável: um k ímpar evita empate entre as duas classes, e um k maior reduz a sensibilidade a exames atípicos.
+**Escolha do k.** Testamos k de 1 a 9 e medimos a taxa de erro no teste. O erro cai de 9,6% (k = 1) para 7,9% em k = 3, 4 e 5, sobe para 8,8% em k = 6 e volta a 7,9% de k = 7 a 9. Escolhemos k = 5, dentro da faixa de erro mínimo: um k ímpar evita empate entre as duas classes, e um k maior reduz a sensibilidade a exames atípicos.
 
 Além do k do KNN, nenhum hiperparâmetro foi ajustado: o `C` do SVM e o número de árvores do Random Forest ficaram nos valores padrão.
 

@@ -23,19 +23,36 @@ O relatório técnico com o pré-processamento, os modelos e os resultados está
 ├── data/
 │   └── data.csv                                # dataset (já incluído)
 ├── docs/
-│   ├── relatorio-tecnico.md                    # relatório técnico
-│   ├── relatorio-tecnico.pdf
+│   ├── entrega-fase1.pdf / .md                 # documento de entrega da Fase 1
+│   ├── relatorio-tecnico.pdf / .md             # relatório técnico
+│   ├── resultados/                             # gráficos gerados pelo notebook
 │   └── importancia-variaveis-knn.png           # gráfico usado no relatório
+├── Dockerfile
 ├── requirements.txt
 └── README.md
 ```
 
-## Pré-requisitos
+## Como rodar com Docker
 
-- Python 3.10 ou superior
+Requer apenas o [Docker](https://docs.docker.com/get-docker/) instalado.
+
+```bash
+git clone https://github.com/hugocesarcoelho/fiap-tc-fase1-ai.git
+cd fiap-tc-fase1-ai
+docker build -t fiap-tc-fase1-ai .
+docker run --rm -p 8888:8888 fiap-tc-fase1-ai
+```
+
+Abra http://localhost:8888 no navegador, entre em `breast-cancer-knn-svm-random-forest.ipynb` e execute todas as células (**Run All**). Para encerrar, use `Ctrl+C` no terminal.
+
+O Jupyter do container roda sem token, para uso local. Alterações feitas no notebook ficam só dentro do container e somem quando ele é encerrado.
+
+## Como rodar sem Docker
+
+### Pré-requisitos
+
+- Python 3.11 ou superior
 - `pip`
-
-## Como rodar
 
 ### 1. Clonar o repositório
 
