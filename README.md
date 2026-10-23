@@ -11,6 +11,8 @@ O notebook usa o dataset [Breast Cancer Wisconsin (Diagnostic)](https://www.kagg
 - **SVM** (`LinearSVC`): treino e acurácia;
 - importância das variáveis por *permutation importance* (métrica: recall).
 
+O relatório técnico com o pré-processamento, os modelos e os resultados está em [docs/relatorio-tecnico.md](docs/relatorio-tecnico.md) (também em [PDF](docs/relatorio-tecnico.pdf)).
+
 ## Estrutura
 
 ```
@@ -18,6 +20,10 @@ O notebook usa o dataset [Breast Cancer Wisconsin (Diagnostic)](https://www.kagg
 ├── breast-cancer-knn-svm-random-forest.ipynb   # notebook principal
 ├── data/
 │   └── data.csv                                # dataset (já incluído)
+├── docs/
+│   ├── relatorio-tecnico.md                    # relatório técnico
+│   ├── relatorio-tecnico.pdf
+│   └── importancia-variaveis-knn.png           # gráfico usado no relatório
 ├── requirements.txt
 └── README.md
 ```
