@@ -19,7 +19,8 @@ Outubro de 2026
 | | |
 | --- | --- |
 | **Repositório Git** | [https://github.com/hugocesarcoelho/fiap-tc-fase1-ai](https://github.com/hugocesarcoelho/fiap-tc-fase1-ai) |
-| **Vídeo de demonstração** | [https://youtu.be/vv8gxPOWYq0](https://youtu.be/vv8gxPOWYq0) |
+| **Vídeo de demonstração (parte 1)** | [https://youtu.be/vv8gxPOWYq0](https://youtu.be/vv8gxPOWYq0) · análise exploratória, pré-processamento e modelos (notebook principal) |
+| **Vídeo de demonstração (parte 2)** | [https://youtu.be/FOKu4TnUH_s](https://youtu.be/FOKu4TnUH_s) · execução via Docker, validação, 10 vs 30 variáveis e SHAP (notebook 02) |
 | **Dataset** | Incluído em `data/data.csv` · original: [Kaggle — Breast Cancer Wisconsin (Diagnostic)](https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data) |
 
 ## 2. Conteúdo do repositório
